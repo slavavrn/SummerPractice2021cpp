@@ -1,3 +1,18 @@
+This code with threads didn't build for me. Most likely, inclide <threads> has some additional conditions
+To check the functionality of the algorithm, I made a "threadless" branch - the algorithm works correctly.
+Changes:
+Corrected time counting, since the original example did not take into account the time of writing to the file, and it is very long in C.
+After getting rid of the string copy operators, the running time decreased very slightly.
+But the substitution of ready-made symbols from the array reduced the execution time by almost 2 times.
+
+На случай, если моя попытка писать на английском ужасна:
+Все-таки этот код с тредами у меня не сбилдился. Скорее всего, просто в inclide <threads> какие-то условия установлены
+для проверки работоспособности кода сделал ветку threadless - код отрабатывает правильно.
+Изменения:
+Исправил подсчет времени, поскольку в исходном примере не учитывалось время записи в файл, а оно на Си очень большое.
+После избавления от операторов копирования строк время работы уменьшилось совсем незначительно.
+А вот подмена готовых символов из массива сократило время выполнения почти в 2 раза
+
 # DataArt Summer practice 2021
 
 ## C++ demo task
