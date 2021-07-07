@@ -10,36 +10,28 @@ const size_t NUMBER_OF_THREADS = 4;
 
 using namespace std;
 
-string process_line(string in_line){
-    string out_line=in_line;
+//array for replace characters. The generate_file.py file used digits and letters only. And input file has CR and LF!!!
+string repl = "                                                1234567890:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+void process_line(string &out_line){
 
     for(size_t i=0; i<out_line.size(); i++){
-        if (isdigit(out_line[i])){
-            int d = out_line[i] -'0';
-            if(d < 9){
-                out_line[i] = '0' + d + 1;
-            }else{
-                out_line[i] = '0';
-            }
-        }else if (isupper(out_line[i])){
-            out_line[i] = tolower(out_line[i]); tolower(out_line[i]);
-        }else{
-            out_line[i] = toupper(out_line[i]);
-        }
+        out_line[i] = repl[(int)(out_line[i])];
     }
 
-    return out_line;
 }
 
-void process_thread(vector<string>& lines, size_t offset, size_t number_of_threads){
+void process_thread(vector<string> &lines, size_t offset, size_t number_of_threads){
     for(size_t i=offset; i<lines.size(); i+=number_of_threads){
-        lines[i] = process_line(lines[i]);
+        process_line(lines[i]);
     }
 }
 
 int main() {
+    //looks bad, but I don't know how to put CR and LF into a string literal
+    repl[10] = (char)(10); repl[13] = (char)(13);
     chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    chrono::steady_clock::time_point data_load;
+    chrono::steady_clock::time_point data_load, data_process;
     try{
         cout<<"Load input data"<<endl;
         ifstream in_file("../input.data");
@@ -66,6 +58,8 @@ int main() {
             thread_pool.emplace_back(process_thread, ref(lines), i ,NUMBER_OF_THREADS);
         }
 
+        data_process = std::chrono::steady_clock::now();
+
         cout<<"Wait for finish"<<endl;
         for(auto& th : thread_pool){
             th.join();
@@ -86,6 +80,8 @@ int main() {
     chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     std::cout << "data load time: " << std::chrono::duration_cast<std::chrono::milliseconds>(data_load - begin).count() << "ms" << std::endl;
+    std::cout << "data process time: " << std::chrono::duration_cast<std::chrono::milliseconds>(data_process - data_load).count() << "ms" << std::endl;
+    std::cout << "data save time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - data_process).count() << "ms" << std::endl;
     std::cout << "total execution time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "ms" << std::endl;
     return 0;
 }
